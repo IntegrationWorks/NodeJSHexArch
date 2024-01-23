@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "NodeJSHexArch"
+  description: "My new NodeJS HexArch project"
+  annotations:
+    github.com/project-slug: undefined/undefined
+spec:
+  type: documentation
+  lifecycle: experimental
+  owner: "group:default/guests"
