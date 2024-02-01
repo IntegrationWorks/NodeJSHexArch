@@ -26,9 +26,8 @@ jobs:
       # - run: npm run test
   image:
     if: 
-      contains('
-        refs/heads/release/
-        refs/heads/hotfix/', github.ref) || 
+      'refs/heads/release/*' == github.ref) || 
+      'refs/heads/hotfix/*' == github.ref)  || 
       github.event.build-push-image == 'true'
     runs-on: ubuntu-latest
     steps:
