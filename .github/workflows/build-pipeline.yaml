@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: echo ${{ github.ref }}
       - uses: actions/setup-node@v3
         with:
           node-version: '14.15.4'
@@ -27,7 +28,7 @@ jobs:
     if: 
       contains('
         refs/heads/release/
-        refs/heads/hotfix/',github.ref) || 
+        refs/heads/hotfix/', github.ref) || 
       github.event.build-push-image == 'true'
     runs-on: ubuntu-latest
     steps:
