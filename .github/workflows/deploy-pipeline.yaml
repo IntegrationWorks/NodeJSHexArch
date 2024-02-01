@@ -1,0 +1,28 @@
+name: ${{ github.repository }} deploy pipeline
+run-name: ${{ github.repository }} deploy pipeline
+on:
+  push:
+    branches:    
+      - '*'
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deploy dev" 
+  # deploy-staging:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo "deploy stage" 
+  # - uses: trstringer/manual-approval@v1
+  #   with:
+  #     secret: ${{ github.TOKEN }}
+  #     approvers: user1,user2,org-team1
+  #     minimum-approvals: 1
+  #     issue-title: "Deploying v1.3.5 to prod from staging"
+  #     issue-body: "Please approve or deny the deployment of version v1.3.5."
+  #     exclude-workflow-initiator-as-approver: false
+  # deploy-production:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo "deploy production"   

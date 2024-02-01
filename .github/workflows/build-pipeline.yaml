@@ -1,0 +1,29 @@
+name: ${{ github.repository }} CI
+run-name: ${{ github.repository }} CI
+on:
+  workflow_dispatch:
+    inputs:
+      build-push-image:
+        type: boolean
+        description: Build and Push the Image
+  push:
+    branches:    
+      - '*'
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14.15.4'
+      - run: npm ci
+      - run: npm run build
+      # - run: npm run test
+  image:
+    if: contains(github.ref, "release/") || contains(github.ref, "hotfix/") || github.event.build-push-image == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker image build . 
