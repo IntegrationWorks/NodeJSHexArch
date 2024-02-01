@@ -13,7 +13,7 @@ COPY . .
 # Build app
 RUN npm run build --production
 
-COPY .env ./build
+COPY ./.env ./build
 
 # Expose port
 EXPOSE 3333
