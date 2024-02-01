@@ -1,4 +1,4 @@
-name: ${{ github.repository }} deploy pipeline
+name: deploy-pipeline
 run-name: ${{ github.repository }} deploy pipeline
 on:
   push:

@@ -1,5 +1,5 @@
-name: ${{ github.repository }} CI
-run-name: ${{ github.repository }} CI
+name: build-pipeline
+run-name: ${{ github.repository }} build pipeline
 on:
   workflow_dispatch:
     inputs:
