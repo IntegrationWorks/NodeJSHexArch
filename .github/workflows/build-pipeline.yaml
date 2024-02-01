@@ -25,6 +25,7 @@ jobs:
         working-directory: ./src
       # - run: npm run test
   image:
+    needs: build
     if: 
       contains(github.ref, 'refs/heads/release/') || 
       contains(github.ref, 'refs/heads/hotfix/') ||
