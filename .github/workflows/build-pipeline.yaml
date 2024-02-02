@@ -25,11 +25,11 @@ jobs:
         working-directory: ./src
       # - run: npm run test
   image:
-    # needs: build
-    # if: 
-    #   contains(github.ref, 'refs/heads/release/') || 
-    #   contains(github.ref, 'refs/heads/hotfix/') ||
-    #   github.event.build-push-image == 'true'
+    needs: build
+    if: 
+      contains(github.ref, 'refs/heads/release/') || 
+      contains(github.ref, 'refs/heads/hotfix/') ||
+      github.event.build-push-image == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
