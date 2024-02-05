@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo ${{ github.ref }}
       - uses: actions/setup-node@v3
         with:
           node-version: '16.17.0'
@@ -23,7 +22,8 @@ jobs:
         working-directory: ./src
       - run: npm run build
         working-directory: ./src
-      # - run: npm run test
+      - run: npm run test
+        working-directory: ./src
   image:
     needs: build
     if: 
