@@ -43,8 +43,7 @@ jobs:
       # This step will create a deployment, service, and route to run your app and expose it to the internet.
       - name: Create and expose app
         id: oc-new-app
-        # uses: redhat-actions/oc-new-app@v1 Test the checked-out version of this action - a user would need the above 'uses'.
-        uses: ./
+        uses: redhat-actions/oc-new-app@v1 
         env:
           # IMAGE: ${{ env[matrix.image-source] }}
           IMAGE: ${{ env.IMAGE_PATH }}
