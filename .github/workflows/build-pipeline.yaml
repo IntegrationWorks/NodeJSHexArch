@@ -36,6 +36,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
@@ -43,12 +44,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: downcase REPO
+        run: |
+          echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: |
-            ghcr.io/${{ github.repository }}
+            ghcr.io/${REPO}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -63,6 +68,6 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${REPO}:latest
           labels: ${{ steps.meta.outputs.labels }}
 
