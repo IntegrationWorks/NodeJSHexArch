@@ -44,16 +44,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: downcase REPO
+      - name: lowerCase REPO
+        id: lower_repo
         run: |
-          echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+          echo "REPO=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: |
-            ghcr.io/${REPO}
+            ghcr.io/${( steps.lower_repo.outputs.REPO }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -68,6 +69,6 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ghcr.io/${REPO}:latest
+            ghcr.io/${( steps.lower_repo.outputs.REPO }}:latest
           labels: ${{ steps.meta.outputs.labels }}
 
