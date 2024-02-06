@@ -5,7 +5,7 @@ on:
 
 env:
   IMAGE_PATH: ghcr.io/${{ github.repository }}:latest
-  APP_NAME: ${{ github.repository }}
+  APP_NAME: ${{ github.event.repository.name }}
   APP_PORT: 8080
   # IMAGE_STREAM: ${{ secrets.OPENSHIFT_NAMESPACE }}/petclinic-${{ github.run_id }}
 
