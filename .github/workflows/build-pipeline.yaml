@@ -26,10 +26,10 @@ jobs:
         working-directory: ./src
   build-push-image:
     needs: build
-    if: 
-      contains(github.ref, 'refs/heads/release/') || 
-      contains(github.ref, 'refs/heads/hotfix/') ||
-      github.event.build-push-image == 'true'
+    # if: 
+    #   contains(github.ref, 'refs/heads/release/') || 
+    #   contains(github.ref, 'refs/heads/hotfix/') ||
+    #   github.event.build-push-image == 'true'
     runs-on: ubuntu-latest
     permissions:
       packages: write
