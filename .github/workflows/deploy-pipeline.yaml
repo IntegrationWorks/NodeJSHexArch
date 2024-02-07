@@ -50,6 +50,7 @@ jobs:
         run: |
           image_path=${{ env.IMAGE_PATH }}
           app=${{ env.APP_NAME }}
+          echo ${{ env.IMAGE_TAG }}
           echo "image_path_lower=${image_path,,}" >> $GITHUB_OUTPUT
           echo "app_name_lower=${app,,}" >> $GITHUB_OUTPUT
 

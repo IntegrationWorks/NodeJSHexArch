@@ -6,9 +6,9 @@ on:
       build-push-image:
         type: boolean
         description: Build and Push the Image
-  push:
-    branches:    
-      - '**'
+  # push:
+  #   branches:    
+  #     - '**'
   
 jobs:
   build:
@@ -47,8 +47,6 @@ jobs:
       - id: lower-repo
         run: |
           echo "repo=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
-      - run: |
-          echo "${{ steps.lower-repo.outputs.repo }}"
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
