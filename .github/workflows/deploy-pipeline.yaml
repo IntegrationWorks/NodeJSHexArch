@@ -12,8 +12,6 @@ env:
   IMAGE_PATH: ${{ github.repository }}
   IMAGE_TAG: ${{ github.event.inputs.image-tag }}
   APP_NAME: ${{ github.event.repository.name }}
-  APP_PORT: 8080
-  # IMAGE_STREAM: ${{ secrets.OPENSHIFT_NAMESPACE }}/petclinic-${{ github.run_id }}
 
 jobs:
   deploy-dev:
@@ -25,7 +23,6 @@ jobs:
       - name: Checkout action
         uses: actions/checkout@v2
 
-       # Use the commit short-sha as the suffix of the app_name
       - name: Get commit short-sha
         id: commit-data
         uses: redhat-actions/common/commit-data@v1
@@ -35,9 +32,6 @@ jobs:
         with:
           oc: 4
 
-      # Log into the OpenShift cluster using the secrets configured in the repository settings.
-      # The GitHub Ubuntu runners have oc pre-installed.
-      # If you're not using those runners, be sure to check out https://github.com/redhat-actions/openshift-tools-installer.
       - name: OpenShift login
         uses: redhat-actions/oc-login@v1
         with:
@@ -46,12 +40,6 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
           
-      # - name: Create Image stream from the image
-      #   if: ${{ matrix.image-source == 'IMAGE_STREAM' }}
-      #   run: |
-      #     oc create is ${{ env.APP_NAME }}-${{ github.run_id }}
-      #     oc import-image ${{ env.APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE_PATH }}
-
       - id: lower-case-vars
         run: |
           image_path=${{ env.IMAGE_PATH }}
@@ -63,39 +51,5 @@ jobs:
         run: |
           echo "${{ secrets.IW_GITHUB_CONTAINER_TOKEN }}" | docker login ghcr.io -u "${{ vars.IW_GITHUB_CONTAINER_USER }}" --password-stdin
 
-      # This step will create a deployment, service, and route to run your app and expose it to the internet.
-      # - name: Create and expose app
-      #   id: oc-new-app
-      #   uses: redhat-actions/oc-new-app@v1 
-      #   env:
-      #     # IMAGE: ${{ env[matrix.image-source] }}
-      #     IMAGE: ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }}
-      #   with:
-      #     app_name: ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ steps.commit-data.outputs.short_sha }}
-      #     image: ${{ env.IMAGE }}
-      #     namespace: ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
-      #     build_env: ./env/dev.env
-      #     create_pull_secret_from: docker
-
-          # Run a script to create a new app or update the current one with the previously pushed container image
       - run: | 
-          oc new-app ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }} --name ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ steps.commit-data.outputs.short_sha }} -n ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }} --env-file=./env/dev.env
-      # - name: Echo outputs
-      #   run: |
-      #     echo "${{ toJSON(steps.oc-new-app.outputs) }}"
-  # deploy-staging:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: echo "deploy stage" 
-  # - uses: trstringer/manual-approval@v1
-  #   with:
-  #     secret: ${{ github.TOKEN }}
-  #     approvers: user1,user2,org-team1
-  #     minimum-approvals: 1
-  #     issue-title: "Deploying v1.3.5 to prod from staging"
-  #     issue-body: "Please approve or deny the deployment of version v1.3.5."
-  #     exclude-workflow-initiator-as-approver: false
-  # deploy-production:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: echo "deploy production"   
+          oc new-app --name ${{ steps.lower-case-vars.outputs.app_name_lower }} ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }} -n ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }} --env-file=./env/dev.env
