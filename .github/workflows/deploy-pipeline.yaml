@@ -74,9 +74,7 @@ jobs:
           app_name: ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ steps.commit-data.outputs.short_sha }}
           image: ${{ env.IMAGE }}
           namespace: ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
-          # build_env: |
-          #   MY_ENV=MY_VALUE
-          # port: ${{ env.APP_PORT }}
+          build_env: ./env/dev.env
           create_pull_secret_from: docker
 
           # Run a script to create a new app or update the current one with the previously pushed container image
