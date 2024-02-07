@@ -2,7 +2,7 @@ name: deploy-pipeline
 run-name: ${{ github.repository }} deploy pipeline
 on:
   workflow_dispatch:
-  inputs:
+    inputs:
       image-tag:
         type: string
         description: Image Tag
