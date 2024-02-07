@@ -75,11 +75,11 @@ jobs:
 
           # Run a script to create a new app or update the current one with the previously pushed container image
       - run: | 
-          "${GITHUB_WORKSPACE}/.github/script.sh" ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ env.IMAGE_TAG }} ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }} ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
+          "${GITHUB_WORKSPACE}/.github/deploy.sh" ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ env.IMAGE_TAG }} ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }} ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
 
-      - name: Echo outputs
-        run: |
-          echo "${{ toJSON(steps.oc-new-app.outputs) }}"
+      # - name: Echo outputs
+      #   run: |
+      #     echo "${{ toJSON(steps.oc-new-app.outputs) }}"
   # deploy-staging:
   #   runs-on: ubuntu-latest
   #   steps:
