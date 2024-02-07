@@ -10,7 +10,7 @@ on:
 env:
   IMAGE_HOST: ghcr.io
   IMAGE_PATH: ${{ github.repository }}
-  IMAGE_TAG: ${{ github.event.build-push-image }}
+  IMAGE_TAG: ${{ github.event.image-tag }}
   APP_NAME: ${{ github.event.repository.name }}
   APP_PORT: 8080
   # IMAGE_STREAM: ${{ secrets.OPENSHIFT_NAMESPACE }}/petclinic-${{ github.run_id }}
