@@ -52,4 +52,12 @@ jobs:
           echo "${{ secrets.IW_GITHUB_CONTAINER_TOKEN }}" | docker login ghcr.io -u "${{ vars.IW_GITHUB_CONTAINER_USER }}" --password-stdin
 
       - run: | 
-          oc new-app --name ${{ steps.lower-case-vars.outputs.app_name_lower }} ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }} -n ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }} --env-file=./env/dev.env
+          app_name=${{ steps.lower-case-vars.outputs.app_name_lower }}
+          image=${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }}
+          deploy=`oc get deployment $app_name`
+          if [[ "$?" -eq 0 ]]; then
+              oc set image deployment/$app_name $app_name=$image
+              oc rollout restart deployment/$app_name
+          else
+              oc new-app --name $app_name $image -n ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }} --env-file=./env/dev.env
+          fi
