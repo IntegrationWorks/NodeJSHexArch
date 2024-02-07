@@ -12,6 +12,9 @@ on:
   
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: ./src
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,11 +22,8 @@ jobs:
         with:
           node-version: '16.17.0'
       - run: npm ci
-        working-directory: ./src
       - run: npm run build
-        working-directory: ./src
       - run: npm run test
-        working-directory: ./src
   build-push-image:
     needs: build
     # if: 
