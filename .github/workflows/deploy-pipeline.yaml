@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_PATH: ghcr.io/${{ github.repository }}
+  IMAGE_HOST: ghcr.io
+  IMAGE_PATH: ${{ github.repository }}
   IMAGE_TAG: latest
   APP_NAME: ${{ github.event.repository.name }}
   APP_PORT: 8080
@@ -46,13 +47,20 @@ jobs:
           image=${{ env.IMAGE_PATH }}
           echo "repo=${image,,}" >> $GITHUB_OUTPUT
 
+      - name: Podman login
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.IMAGE_HOST }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
       # This step will create a deployment, service, and route to run your app and expose it to the internet.
       - name: Create and expose app
         id: oc-new-app
         uses: redhat-actions/oc-new-app@v1 
         env:
           # IMAGE: ${{ env[matrix.image-source] }}
-          IMAGE: ${{ steps.lower-repo.outputs.repo }}:${{ env.IMAGE_TAG }}
+          IMAGE: ${{ env.IMAGE_HOST }}/${{ steps.lower-repo.outputs.repo }}:${{ env.IMAGE_TAG }}
         with:
           app_name: ${{ env.APP_NAME }}-${{ steps.commit-data.outputs.short_sha }}
           image: ${{ env.IMAGE }}
@@ -60,10 +68,10 @@ jobs:
           # build_env: |
           #   MY_ENV=MY_VALUE
           # port: ${{ env.APP_PORT }}
-          # create_pull_secret_from: podman
-          registry: ghcr.io
-          registry_username: ${{ github.actor }}
-          registry_password: ${{ secrets.GITHUB_TOKEN }}
+          create_pull_secret_from: podman
+          # registry: ghcr.io
+          # registry_username: ${{ github.actor }}
+          # registry_password: ${{ github.token }}
 
       - name: Echo outputs
         run: |
