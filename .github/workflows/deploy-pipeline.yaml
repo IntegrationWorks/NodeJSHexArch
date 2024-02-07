@@ -54,28 +54,29 @@ jobs:
           echo "image_path_lower=${image_path,,}" >> $GITHUB_OUTPUT
           echo "app_name_lower=${app,,}" >> $GITHUB_OUTPUT
 
+      - name: Docker login
+        run: |
+          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
       # This step will create a deployment, service, and route to run your app and expose it to the internet.
-      # - name: Create and expose app
-      #   id: oc-new-app
-      #   uses: redhat-actions/oc-new-app@v1 
-      #   env:
-      #     # IMAGE: ${{ env[matrix.image-source] }}
-      #     IMAGE: ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }}
-      #   with:
-      #     app_name: ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ steps.commit-data.outputs.short_sha }}
-      #     image: ${{ env.IMAGE }}
-      #     namespace: ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
-      #     # build_env: |
-      #     #   MY_ENV=MY_VALUE
-      #     # port: ${{ env.APP_PORT }}
-      #     # create_pull_secret_from: podman
-      #     registry: ghcr.io
-      #     registry_username: ${{ github.actor }}
-      #     registry_password: ${{ github.token }}
+      - name: Create and expose app
+        id: oc-new-app
+        uses: redhat-actions/oc-new-app@v1 
+        env:
+          # IMAGE: ${{ env[matrix.image-source] }}
+          IMAGE: ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }}
+        with:
+          app_name: ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ steps.commit-data.outputs.short_sha }}
+          image: ${{ env.IMAGE }}
+          namespace: ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
+          # build_env: |
+          #   MY_ENV=MY_VALUE
+          # port: ${{ env.APP_PORT }}
+          create_pull_secret_from: docker
 
           # Run a script to create a new app or update the current one with the previously pushed container image
-      - run: | 
-          "${GITHUB_WORKSPACE}/.github/deploy.sh" ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ env.IMAGE_TAG }} ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }} ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
+      # - run: | 
+      #     "${GITHUB_WORKSPACE}/.github/deploy.sh" ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ env.IMAGE_TAG }} ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }} ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
 
       # - name: Echo outputs
       #   run: |
