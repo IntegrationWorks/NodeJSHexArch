@@ -18,6 +18,9 @@ env:
 jobs:
   deploy-dev:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
     steps:
       - name: Checkout action
         uses: actions/checkout@v2
@@ -35,8 +38,6 @@ jobs:
         with:
           openshift_server_url: ${{ vars.IW_OPENSHIFT_SERVER_NON_PROD }}
           openshift_token: ${{ secrets.IW_OPENSHIFT_TOKEN_NON_PROD }}
-          # openshift_username:
-          # openshift_password:
           insecure_skip_tls_verify: true
           namespace: ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
           
@@ -50,7 +51,6 @@ jobs:
         run: |
           image_path=${{ env.IMAGE_PATH }}
           app=${{ env.APP_NAME }}
-          echo ${{ env.IMAGE_TAG }}
           echo "image_path_lower=${image_path,,}" >> $GITHUB_OUTPUT
           echo "app_name_lower=${app,,}" >> $GITHUB_OUTPUT
 
@@ -69,9 +69,9 @@ jobs:
           #   MY_ENV=MY_VALUE
           # port: ${{ env.APP_PORT }}
           # create_pull_secret_from: podman
-          # registry: ghcr.io
-          # registry_username: ${{ github.actor }}
-          # registry_password: ${{ github.token }}
+          registry: ghcr.io
+          registry_username: ${{ github.actor }}
+          registry_password: ${{ github.token }}
 
       - name: Echo outputs
         run: |
