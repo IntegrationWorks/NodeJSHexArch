@@ -42,10 +42,12 @@ jobs:
       #     oc create is ${{ env.APP_NAME }}-${{ github.run_id }}
       #     oc import-image ${{ env.APP_NAME }}-${{ github.run_id }} --from ${{ env.IMAGE_PATH }}
 
-      - id: lower-repo
+      - id: lower-case-vars
         run: |
-          image=${{ env.IMAGE_PATH }}
-          echo "repo=${image,,}" >> $GITHUB_OUTPUT
+          image_path=${{ env.IMAGE_PATH }}
+          app=${{ env.APP_NAME }}
+          echo "image_path_lower=${image_path,,}" >> $GITHUB_OUTPUT
+          echo "app_name_lower=${app,,}" >> $GITHUB_OUTPUT
 
       - name: Podman login
         uses: redhat-actions/podman-login@v1
@@ -60,9 +62,9 @@ jobs:
         uses: redhat-actions/oc-new-app@v1 
         env:
           # IMAGE: ${{ env[matrix.image-source] }}
-          IMAGE: ${{ env.IMAGE_HOST }}/${{ steps.lower-repo.outputs.repo }}:${{ env.IMAGE_TAG }}
+          IMAGE: ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }}
         with:
-          app_name: ${{ env.APP_NAME }}-${{ steps.commit-data.outputs.short_sha }}
+          app_name: ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ steps.commit-data.outputs.short_sha }}
           image: ${{ env.IMAGE }}
           namespace: ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
           # build_env: |
