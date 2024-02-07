@@ -61,7 +61,7 @@ jobs:
 
       - name: Docker login
         run: |
-          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          echo "${{ secrets.IW_GITHUB_CONTAINER_TOKEN }}" | docker login ghcr.io -u "${{ vars.IW_GITHUB_CONTAINER_USER }}" --password-stdin
 
       # This step will create a deployment, service, and route to run your app and expose it to the internet.
       - name: Create and expose app
