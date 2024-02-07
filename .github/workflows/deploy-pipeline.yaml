@@ -50,7 +50,7 @@ jobs:
         run: |
           image_path=${{ env.IMAGE_PATH }}
           app=${{ env.APP_NAME }}
-          echo ${{ env.IMAGE_TAG }}
+          echo ${{ github.event.image-tag }}
           echo "image_path_lower=${image_path,,}" >> $GITHUB_OUTPUT
           echo "app_name_lower=${app,,}" >> $GITHUB_OUTPUT
 
@@ -60,7 +60,7 @@ jobs:
         uses: redhat-actions/oc-new-app@v1 
         env:
           # IMAGE: ${{ env[matrix.image-source] }}
-          IMAGE: ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }}
+          IMAGE: ${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ github.event.image-tag }}
         with:
           app_name: ${{ steps.lower-case-vars.outputs.app_name_lower }}-${{ steps.commit-data.outputs.short_sha }}
           image: ${{ env.IMAGE }}
