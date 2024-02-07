@@ -2,11 +2,15 @@ name: deploy-pipeline
 run-name: ${{ github.repository }} deploy pipeline
 on:
   workflow_dispatch:
+  inputs:
+      image-tag:
+        type: string
+        description: Image Tag
 
 env:
   IMAGE_HOST: ghcr.io
   IMAGE_PATH: ${{ github.repository }}
-  IMAGE_TAG: latest
+  IMAGE_TAG: ${{ github.event.build-push-image }}
   APP_NAME: ${{ github.event.repository.name }}
   APP_PORT: 8080
   # IMAGE_STREAM: ${{ secrets.OPENSHIFT_NAMESPACE }}/petclinic-${{ github.run_id }}
@@ -49,13 +53,6 @@ jobs:
           echo "image_path_lower=${image_path,,}" >> $GITHUB_OUTPUT
           echo "app_name_lower=${app,,}" >> $GITHUB_OUTPUT
 
-      - name: Podman login
-        uses: redhat-actions/podman-login@v1
-        with:
-          registry: ${{ env.IMAGE_HOST }}
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
       # This step will create a deployment, service, and route to run your app and expose it to the internet.
       - name: Create and expose app
         id: oc-new-app
@@ -70,7 +67,7 @@ jobs:
           # build_env: |
           #   MY_ENV=MY_VALUE
           # port: ${{ env.APP_PORT }}
-          create_pull_secret_from: podman
+          # create_pull_secret_from: podman
           # registry: ghcr.io
           # registry_username: ${{ github.actor }}
           # registry_password: ${{ github.token }}
