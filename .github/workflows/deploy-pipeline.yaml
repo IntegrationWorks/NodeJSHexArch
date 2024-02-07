@@ -61,9 +61,9 @@ jobs:
           #   MY_ENV=MY_VALUE
           # port: ${{ env.APP_PORT }}
           # create_pull_secret_from: podman
-          # registry: ghcr.io
-          # registry_username: ${{ env.REGISTRY_USERNAME }}
-          # registry_password: ${{ secrets.REGISTRY_PASSWORD }}
+          registry: ghcr.io
+          registry_username: ${{ github.actor }}
+          registry_password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Echo outputs
         run: |
