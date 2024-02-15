@@ -23,10 +23,6 @@ jobs:
       - name: Checkout action
         uses: actions/checkout@v2
 
-      - name: Get commit short-sha
-        id: commit-data
-        uses: redhat-actions/common/commit-data@v1
-
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
         with:
@@ -51,7 +47,10 @@ jobs:
         run: |
           echo "${{ secrets.IW_GITHUB_CONTAINER_TOKEN }}" | docker login ghcr.io -u "${{ vars.IW_GITHUB_CONTAINER_USER }}" --password-stdin
 
-      - run: | 
+      ## using the oc new-app command
+      ## TODO define the deployment through deploymentConfig or Helm charts to manage in source. 
+      - name: Deploy
+        run: | 
           app_name=${{ steps.lower-case-vars.outputs.app_name_lower }}
           image=${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }}
           deploy=`oc get deployment $app_name`
