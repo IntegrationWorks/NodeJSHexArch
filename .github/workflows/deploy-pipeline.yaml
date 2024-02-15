@@ -12,6 +12,7 @@ env:
   IMAGE_PATH: ${{ github.repository }}
   IMAGE_TAG: ${{ github.event.inputs.image-tag }}
   APP_NAME: ${{ github.event.repository.name }}
+  HELM_CHART: ./rhos-nodejs-0.0.1.tgz
 
 jobs:
   deploy-dev:
@@ -20,8 +21,16 @@ jobs:
       run:
         working-directory: ./src
     steps:
-      - name: Checkout action
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        name: checkout helm repo
+        with:
+          repository: IntegrationWorks/helm-packaged-charts
+          token: ${{ secrets.HELM_READ_ACCESS_TOKEN }} 
+
+      - id: lower-case-vars
+        run: |
+          image_full=${{ env.IMAGE_HOST }}/${{ env.IMAGE_PATH }}
+          echo "image=${image_path,,}" >> $GITHUB_OUTPUT
 
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
@@ -35,28 +44,9 @@ jobs:
           openshift_token: ${{ secrets.IW_OPENSHIFT_TOKEN_NON_PROD }}
           insecure_skip_tls_verify: true
           namespace: ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }}
-          
-      - id: lower-case-vars
-        run: |
-          image_path=${{ env.IMAGE_PATH }}
-          app=${{ env.APP_NAME }}
-          echo "image_path_lower=${image_path,,}" >> $GITHUB_OUTPUT
-          echo "app_name_lower=${app,,}" >> $GITHUB_OUTPUT
 
-      - name: Docker login
-        run: |
-          echo "${{ secrets.IW_GITHUB_CONTAINER_TOKEN }}" | docker login ghcr.io -u "${{ vars.IW_GITHUB_CONTAINER_USER }}" --password-stdin
-
-      ## using the oc new-app command
-      ## TODO define the deployment through deploymentConfig or Helm charts to manage in source. 
       - name: Deploy
-        run: | 
-          app_name=${{ steps.lower-case-vars.outputs.app_name_lower }}
-          image=${{ env.IMAGE_HOST }}/${{ steps.lower-case-vars.outputs.image_path_lower }}:${{ env.IMAGE_TAG }}
-          deploy=`oc get deployment $app_name`
-          if [[ "$?" -eq 0 ]]; then
-              oc set image deployment/$app_name $app_name=$image
-              oc rollout restart deployment/$app_name
-          else
-              oc new-app --name $app_name $image -n ${{ vars.IW_OPENSHIFT_NAMESPACE_DEV }} --env-file=./env/dev.env
-          fi
+        run: |
+          helm upgrade -i ${{ env.APP_NAME }} ${{ env.HELM_CHART }} \
+          --set image.name=${{ steps.lower-case-vars.outputs.image }} \
+          --set image.tag=${{ env.IMAGE_TAG }}
