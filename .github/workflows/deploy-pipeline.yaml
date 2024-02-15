@@ -27,7 +27,9 @@ jobs:
       - id: lower-case-vars
         run: |
           image_full=${{ env.IMAGE_HOST }}/${{ env.IMAGE_PATH }}
+          app=${{ env.APP_NAME }}
           echo "image=${image_path,,}" >> $GITHUB_OUTPUT
+          echo "release_name=${app,,}" >> $GITHUB_OUTPUT
 
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
@@ -44,6 +46,7 @@ jobs:
 
       - name: Deploy
         run: |
-          helm upgrade -i ${{ env.APP_NAME }} ${{ env.HELM_CHART }} \
+          helm upgrade -i \
+          ${{ steps.lower-case-vars.outputs.release_name  }} ${{ env.HELM_CHART }} \
           --set image.name=${{ steps.lower-case-vars.outputs.image }} \
           --set image.tag=${{ env.IMAGE_TAG }}
