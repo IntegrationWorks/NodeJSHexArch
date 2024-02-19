@@ -49,4 +49,4 @@ jobs:
           helm upgrade -i \
           ${{ steps.lower-case-vars.outputs.release_name  }} ${{ env.HELM_CHART }} \
           --set image.name=${{ steps.lower-case-vars.outputs.image }} \
-          --set image.tag=${{ env.IMAGE_TAG }}
+          --set image.tag=${{ env.IMAGE_TAG }} --wait
